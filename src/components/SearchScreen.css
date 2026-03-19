@@ -1,0 +1,460 @@
+.search-screen {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.search-header {
+  margin-bottom: 40px;
+}
+
+.search-header h1 {
+  color: white;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.search-header p {
+  color: #b3b3b3;
+  font-size: 18px;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+}
+
+.search-box input {
+  flex-grow: 1;
+  padding: 15px 20px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #1db954;
+}
+
+.search-box button {
+  padding: 15px 30px;
+  border-radius: 30px;
+  border: none;
+  background: #1db954;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.search-box button:hover:not(:disabled) {
+  background: #1ed760;
+}
+
+.search-box button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.upload-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.upload-section h3 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.upload-button {
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-button:hover {
+  border-color: #1db954;
+  background: rgba(29, 185, 84, 0.05);
+}
+
+.upload-icon {
+  font-size: 48px;
+}
+
+.upload-text {
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.upload-hint {
+  color: #b3b3b3;
+  font-size: 14px;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.file-name {
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.file-size {
+  color: #b3b3b3;
+  font-size: 14px;
+}
+
+.upload-submit {
+  padding: 15px 30px;
+  border-radius: 25px;
+  border: none;
+  background: #1db954;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  align-self: flex-start;
+}
+
+.upload-submit:hover:not(:disabled) {
+  background: #1ed760;
+}
+
+.upload-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  background: #1db954;
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.progress-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff4444;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.success-message {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  color: #00ff00;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.search-results, .my-tracks {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  color: white;
+  font-size: 24px;
+  margin: 0;
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  color: #1db954;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.refresh-btn:hover {
+  background: rgba(29, 185, 84, 0.1);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.track-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.track-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.track-cover {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.track-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.track-info h4 {
+  color: white;
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-info p {
+  color: #b3b3b3;
+  margin: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.uploader {
+  display: block;
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.track-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.play-btn, .add-btn, .delete-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.play-btn {
+  background: #1db954;
+  color: white;
+}
+
+.play-btn:hover {
+  background: #1ed760;
+  transform: scale(1.1);
+}
+
+.add-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.add-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff4444;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 0, 0, 0.2);
+  transform: scale(1.1);
+}
+
+/* Стили для списка моих треков */
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.track-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.track-main {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.track-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.track-details {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.track-details h4 {
+  color: white;
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-details p {
+  color: #b3b3b3;
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-date {
+  color: #666;
+  font-size: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.empty-state h4 {
+  color: white;
+  margin: 0 0 10px 0;
+}
+
+.empty-state p {
+  color: #b3b3b3;
+  margin: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .search-screen {
+    padding: 15px;
+    padding-bottom: 120px;
+  }
+  
+  .search-box {
+    flex-direction: column;
+  }
+  
+  .tracks-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .track-item {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .track-actions {
+    align-self: flex-end;
+  }
+}

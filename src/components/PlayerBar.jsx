@@ -7,49 +7,20 @@ export function PlayerBar() {
   const [isSeeking, setIsSeeking] = useState(false);
 
   useEffect(() => {
-    const handleStateChange = (state) => {
-      setPlayerState(state);
-    };
-
+    const handleStateChange = (state) => setPlayerState(state);
     audioPlayer.addListener(handleStateChange);
-    
-    // Загружаем сохраненные треки
     audioPlayer.loadFromLocalStorage();
 
-    return () => {
-      audioPlayer.removeListener(handleStateChange);
-    };
+    return () => audioPlayer.removeListener(handleStateChange);
   }, []);
 
-  const handlePlayPause = () => {
-    audioPlayer.togglePlay();
-  };
-
-  const handleNext = () => {
-    audioPlayer.next();
-  };
-
-  const handlePrev = () => {
-    audioPlayer.prev();
-  };
-
-  const handleVolumeChange = (e) => {
-    const volume = parseFloat(e.target.value);
-    audioPlayer.setVolume(volume);
-  };
-
-  const handleSeek = (e) => {
-    const time = parseFloat(e.target.value);
-    audioPlayer.seek(time);
-  };
-
-  const handleSeekStart = () => {
-    setIsSeeking(true);
-  };
-
-  const handleSeekEnd = () => {
-    setIsSeeking(false);
-  };
+  const handlePlayPause = () => audioPlayer.togglePlay();
+  const handleNext = () => audioPlayer.next();
+  const handlePrev = () => audioPlayer.prev();
+  const handleVolumeChange = (e) => audioPlayer.setVolume(parseFloat(e.target.value));
+  const handleSeek = (e) => audioPlayer.seek(parseFloat(e.target.value));
+  const handleSeekStart = () => setIsSeeking(true);
+  const handleSeekEnd = () => setIsSeeking(false);
 
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return '0:00';
@@ -66,9 +37,12 @@ export function PlayerBar() {
           <>
             <div 
               className="track-cover" 
-              style={{ background: playerState.currentTrack.color }}
+              style={{
+                background: `linear-gradient(135deg, ${playerState.currentTrack.color || '#5662f6'} 0%, #1a1a2e 100%)`
+              }}
+              title={playerState.currentTrack.title}
             >
-              ♪
+              🎵
             </div>
             <div className="track-info">
               <h4>{playerState.currentTrack.title}</h4>
@@ -89,9 +63,15 @@ export function PlayerBar() {
           <button className="control-btn" onClick={handlePrev} title="Предыдущий">
             ⏮
           </button>
-          <button className="control-btn play-btn" onClick={handlePlayPause} title={playerState.isPlaying ? 'Пауза' : 'Воспроизвести'}>
+
+          <button 
+            className={`control-btn play-btn ${playerState.isPlaying ? 'playing' : ''}`} 
+            onClick={handlePlayPause} 
+            title={playerState.isPlaying ? 'Пауза' : 'Воспроизвести'}
+          >
             {playerState.isPlaying ? '⏸️' : '▶️'}
           </button>
+
           <button className="control-btn" onClick={handleNext} title="Следующий">
             ⏭
           </button>
@@ -104,7 +84,7 @@ export function PlayerBar() {
             className="progress-bar"
             min="0"
             max={playerState.duration || 100}
-            value={playerState.currentTime || 0}
+            value={isSeeking ? undefined : playerState.currentTime || 0}
             onChange={handleSeek}
             onMouseDown={handleSeekStart}
             onMouseUp={handleSeekEnd}
@@ -132,6 +112,5 @@ export function PlayerBar() {
     </div>
   );
 }
-
 
 export default PlayerBar;

@@ -1,431 +1,213 @@
-/* MenuBar.css */
+/* MenuBar.css - улучшенный стиль */
 .menu-bar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: white;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px); /* добавим размытие для глубины */
+}
+
+/* collapsed / expanded */
+.menu-bar.collapsed { width: 70px; }
+.menu-bar.expanded { width: 280px; }
+
+/* Header */
+.menu-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Toggle button */
+.toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.toggle-btn:hover { background: rgba(86, 98, 246, 0.3); transform: scale(1.1); }
+
+/* Branding */
+.app-brand {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+}
+.logo { font-size: 28px; margin-right: 10px; }
+.app-name {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #5662f6, #9a4dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* User section */
+.user-section {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 15px;
+}
+.user-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+.user-avatar, .avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #5662f6;
+  transition: all 0.3s ease;
+}
+.user-avatar:hover, .avatar-placeholder:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(86, 98, 246, 0.6);
+}
+.user-info { flex: 1; opacity: 0; animation: fadeIn 0.5s ease 0.2s forwards; }
+.username { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: #f1f1f1; }
+.user-email { font-size: 12px; color: #a0a0c0; margin-bottom: 6px; }
+.user-premium-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  color: #333;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Menu items */
+.menu-items {
+  flex: 1;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  color: #a0a0c0;
+  padding: 12px 20px;
+  margin: 0 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 16px;
+}
+.menu-item:hover { background: rgba(86, 98, 246, 0.1); color: #f1f1f1; transform: translateX(5px); }
+.menu-item.active { background: rgba(86, 98, 246, 0.15); color: #5662f6; font-weight: 600; }
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: #5662f6;
+  border-radius: 0 2px 2px 0;
+}
+.menu-icon { font-size: 20px; width: 30px; flex-shrink: 0; }
+.menu-label { flex: 1; opacity: 0; animation: fadeIn 0.5s ease forwards; }
+.playlist-badge {
+  background: #5662f6;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Playlist section */
+.playlist-section {
+  padding: 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.playlist-items { display: flex; flex-direction: column; gap: 5px; }
+.playlist-item {
+  display: flex;
+  align-items: center;
+  color: #a0a0c0;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.playlist-item:hover { background: rgba(86, 98, 246, 0.08); color: #f1f1f1; transform: translateX(3px); }
+.playlist-icon { font-size: 16px; width: 30px; flex-shrink: 0; }
+.playlist-name { flex: 1; font-size: 14px; opacity: 0; animation: fadeIn 0.5s ease forwards; }
+.track-count { font-size: 12px; color: #666; margin-left: 8px; opacity: 0; animation: fadeIn 0.5s ease forwards; }
+
+/* Stats section */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px; }
+.stat-item {
+  background: rgba(86, 98, 246, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.stat-item:hover { transform: translateY(-3px); background: rgba(86, 98, 246, 0.15); }
+.stat-number { font-size: 22px; font-weight: 700; color: #5662f6; margin-bottom: 5px; }
+.stat-label { font-size: 11px; color: #a0a0c0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Footer */
+.menu-footer { padding: 20px; margin-top: auto; }
+.premium-info {
+  display: flex; align-items: center;
+  background: linear-gradient(135deg, rgba(86, 98, 246, 0.2), rgba(154, 77, 255, 0.2));
+  border-radius: 10px; padding: 12px; margin-bottom: 15px;
+}
+.logout-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 87, 87, 0.1);
+  border-radius: 10px; padding: 12px; color: #ff5757;
+  border: 1px solid rgba(255,87,87,0.3); cursor: pointer;
+  transition: all 0.3s ease;
+}
+.logout-btn:hover { background: rgba(255,87,87,0.2); transform: translateY(-2px); }
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .menu-bar { width: 70px !important; }
+  .menu-bar.expanded { width: 280px !important; }
+  .menu-bar.expanded .app-brand,
+  .menu-bar.expanded .user-info,
+  .menu-bar.expanded .menu-label,
+  .menu-bar.expanded .playlist-name,
+  .menu-bar.expanded .track-count,
+  .menu-bar.expanded .stat-item,
+  .menu-bar.expanded .premium-info,
+  .menu-bar.expanded .logout-btn,
+  .menu-bar.expanded .logout-text {
+    opacity: 1 !important; animation: none;
   }
-  
-  .menu-bar.collapsed {
-    width: 70px;
-  }
-  
-  .menu-bar.expanded {
-    width: 280px;
-  }
-  
-  .menu-header {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .toggle-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-  }
-  
-  .toggle-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-  }
-  
-  .app-brand {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  @keyframes fadeIn {
-    to { opacity: 1; }
-  }
-  
-  .logo {
-    font-size: 28px;
-    margin-right: 10px;
-  }
-  
-  .app-name {
-    font-size: 22px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #5662f6, #9a4dff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  /* Секция пользователя */
-  .user-section {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    gap: 15px;
-  }
-  
-  .user-avatar-container {
-    position: relative;
-    flex-shrink: 0;
-  }
-  
-  .user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #5662f6;
-    transition: all 0.3s ease;
-  }
-  
-  .user-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(86, 98, 246, 0.5);
-  }
-  
-  .avatar-placeholder {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #5662f6, #9a4dff);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-  }
-  
-  .avatar-placeholder:hover {
-    transform: scale(1.05);
-  }
-  
-  .user-info {
-    flex: 1;
-    opacity: 0;
-    animation: fadeIn 0.5s ease 0.2s forwards;
-  }
-  
-  .username {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 4px;
-    color: #f1f1f1;
-  }
-  
-  .user-email {
-    font-size: 12px;
-    color: #a0a0c0;
-    margin-bottom: 6px;
-  }
-  
-  .user-premium-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #ffd700, #ffaa00);
-    color: #333;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  /* Основные пункты меню */
-  .menu-items {
-    flex: 1;
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .menu-item {
-    display: flex;
-    align-items: center;
-    background: none;
-    border: none;
-    color: #a0a0c0;
-    padding: 12px 20px;
-    margin: 0 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    text-align: left;
-    font-size: 16px;
-  }
-  
-  .menu-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #f1f1f1;
-    transform: translateX(5px);
-  }
-  
-  .menu-item.active {
-    background: rgba(86, 98, 246, 0.15);
-    color: #5662f6;
-    font-weight: 600;
-  }
-  
-  .menu-item.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: #5662f6;
-    border-radius: 0 2px 2px 0;
-  }
-  
-  .menu-icon {
-    font-size: 20px;
-    width: 30px;
-    flex-shrink: 0;
-  }
-  
-  .menu-label {
-    flex: 1;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  .playlist-badge {
-    background: #5662f6;
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-left: 8px;
-    min-width: 20px;
-    text-align: center;
-  }
-  
-  /* Секция плейлистов */
-  .playlist-section {
-    padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .section-header {
-    padding: 0 20px 10px 20px;
-  }
-  
-  .section-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    font-weight: 600;
-  }
-  
-  .playlist-items {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .playlist-item {
-    display: flex;
-    align-items: center;
-    background: none;
-    border: none;
-    color: #a0a0c0;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-  }
-  
-  .playlist-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #f1f1f1;
-  }
-  
-  .playlist-icon {
-    font-size: 16px;
-    width: 30px;
-    flex-shrink: 0;
-  }
-  
-  .playlist-name {
-    flex: 1;
-    font-size: 14px;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  .track-count {
-    font-size: 12px;
-    color: #666;
-    margin-left: 8px;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  /* Секция статистики */
-  .stats-section {
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 0 20px;
-  }
-  
-  .stat-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-    text-align: center;
-    transition: all 0.3s ease;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  .stat-item:hover {
-    transform: translateY(-3px);
-    background: rgba(255, 255, 255, 0.08);
-  }
-  
-  .stat-number {
-    font-size: 22px;
-    font-weight: 700;
-    color: #5662f6;
-    margin-bottom: 5px;
-  }
-  
-  .stat-label {
-    font-size: 11px;
-    color: #a0a0c0;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  /* Футер меню */
-  .menu-footer {
-    padding: 20px;
-    margin-top: auto;
-  }
-  
-  .premium-info {
-    display: flex;
-    align-items: center;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 170, 0, 0.1));
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  .premium-icon {
-    font-size: 24px;
-    margin-right: 12px;
-    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
-  }
-  
-  .premium-text {
-    flex: 1;
-  }
-  
-  .premium-title {
-    font-weight: 600;
-    color: #ffd700;
-    font-size: 14px;
-    margin-bottom: 3px;
-  }
-  
-  .premium-expiry {
-    font-size: 11px;
-    color: #a0a0c0;
-  }
-  
-  .logout-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background: rgba(255, 87, 87, 0.1);
-    border: 1px solid rgba(255, 87, 87, 0.3);
-    color: #ff5757;
-    padding: 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    font-weight: 600;
-    opacity: 0;
-    animation: fadeIn 0.5s ease 0.3s forwards;
-  }
-  
-  .logout-btn:hover {
-    background: rgba(255, 87, 87, 0.2);
-    transform: translateY(-2px);
-  }
-  
-  .logout-icon {
-    font-size: 16px;
-    margin-right: 8px;
-  }
-  
-  .logout-text {
-    opacity: 0;
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  /* Адаптивность */
-  @media (max-width: 768px) {
-    .menu-bar {
-      width: 70px !important;
-    }
-    
-    .menu-bar.expanded {
-      width: 280px !important;
-      box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
-    }
-    
-    .menu-bar.expanded .app-brand,
-    .menu-bar.expanded .user-info,
-    .menu-bar.expanded .menu-label,
-    .menu-bar.expanded .playlist-name,
-    .menu-bar.expanded .track-count,
-    .menu-bar.expanded .stat-item,
-    .menu-bar.expanded .premium-info,
-    .menu-bar.expanded .logout-btn,
-    .menu-bar.expanded .logout-text {
-      opacity: 1 !important;
-      animation: none;
-    }
-  }
+}

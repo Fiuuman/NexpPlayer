@@ -7,7 +7,7 @@ export default defineConfig({
     preact()
   ],
   server: {
-    port: 8080,
+    port: 1420,
     strictPort: true,
   },
   build: {

@@ -1,242 +1,287 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { audioPlayer } from '../services/audio-player';
 import './AuthScreen.css';
 
-export function AuthScreen({ onLogin }) { // Принимаем проп onLogin
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+export function AuthScreen() {
+  const [playerState, setPlayerState] = useState(audioPlayer.getState());
+  const [recentTracks, setRecentTracks] = useState([]);
+  const [topPlaylists, setTopPlaylists] = useState([]);
+  const [user, setUser] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError(''); // Очищаем ошибку при изменении
+  useEffect(() => {
+    const handleStateChange = (state) => setPlayerState(state);
+    audioPlayer.addListener(handleStateChange);
+
+    const savedUser = localStorage.getItem('harmony_user');
+    if (savedUser) setUser(JSON.parse(savedUser));
+
+    loadRecentTracks();
+    loadPlaylists();
+
+    return () => audioPlayer.removeListener(handleStateChange);
+  }, []);
+
+  const loadRecentTracks = () => {
+    const recent = audioPlayer.playlist.slice(-4).reverse();
+    setRecentTracks(recent);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const loadPlaylists = () => {
+    const savedPlaylists = JSON.parse(localStorage.getItem('harmony_playlists') || '[]');
+    if (savedPlaylists.length > 0) {
+      setTopPlaylists(savedPlaylists.slice(0, 4));
+    } else {
+      setTopPlaylists([
+        { id: 1, name: 'Избранное', count: 0, color: '#5f0368', tracks: [] },
+        { id: 2, name: 'Загруженные', count: audioPlayer.playlist.length, color: '#88038d', tracks: [] },
+        { id: 3, name: 'Для работы', count: 0, color: '#b9008b', tracks: [] },
+        { id: 4, name: 'Для отдыха', count: 0, color: '#e907e9', tracks: [] },
+      ]);
+    }
+  };
 
-    try {
-      // Простая валидация
-      if (!formData.username.trim() || !formData.password.trim()) {
-        throw new Error('Пожалуйста, заполните все поля');
-      }
+  const handlePlayTrack = (track) => {
+    const index = audioPlayer.playlist.findIndex(t => t.id === track.id);
+    if (index !== -1) {
+      audioPlayer.loadTrack(track, index);
+      audioPlayer.play();
+    }
+  };
 
-      if (!isLogin && !formData.email.trim()) {
-        throw new Error('Пожалуйста, введите email');
-      }
-
-      // URL для запроса
-      const url = isLogin 
-        ? 'http://localhost:3001/api/auth/login'
-        : 'http://localhost:3001/api/auth/register';
-
-      const payload = isLogin
-        ? { email: formData.email || formData.username, password: formData.password }
-        : formData;
-
-      // Отправляем запрос на сервер
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Ошибка авторизации');
-      }
-
-      // Если успешно, вызываем onLogin с данными
-      if (onLogin) {
-        onLogin(data.token, data.user);
-      }
-
-    } catch (error) {
-      console.error('Ошибка авторизации:', error);
-      setError(error.message);
-      
-      // Если сервер недоступен, используем локальную авторизацию
-      if (error.message.includes('Failed to fetch') || error.message.includes('Network')) {
-        // Локальная авторизация для демо
-        const demoUser = {
-          id: 1,
-          username: formData.username || 'DemoUser',
-          email: formData.email || 'demo@example.com',
-          avatar: null,
-          created_at: new Date().toISOString()
-        };
-        
-        const demoToken = 'demo-token-' + Date.now();
-        
-        if (onLogin) {
-          onLogin(demoToken, demoUser);
+  const handleMusicUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      try {
+        const track = await audioPlayer.uploadMusic(file);
+        alert(`Трек "${track.title}" успешно загружен!`);
+        loadRecentTracks();
+        loadPlaylists();
+        if (audioPlayer.playlist.length === 1) {
+          audioPlayer.loadTrack(track, 0);
+          audioPlayer.play();
         }
+      } catch (error) {
+        alert('Ошибка при загрузке трека: ' + error.message);
       }
-    } finally {
-      setIsLoading(false);
+    } else {
+      alert('Пожалуйста, выберите аудио файл (MP3, WAV, etc.)');
+    }
+    e.target.value = '';
+  };
+
+  const handleCreatePlaylist = () => {
+    const name = prompt('Введите название нового плейлиста:');
+    if (name && name.trim()) {
+      const newPlaylist = { id: Date.now(), name: name.trim(), count: 0, color: getRandomColor(), tracks: [] };
+      const savedPlaylists = JSON.parse(localStorage.getItem('harmony_playlists') || '[]');
+      savedPlaylists.push(newPlaylist);
+      localStorage.setItem('harmony_playlists', JSON.stringify(savedPlaylists));
+      loadPlaylists();
+      alert(`Плейлист "${name}" создан!`);
     }
   };
 
-  const handleDemoLogin = () => {
-    // Демо вход для тестирования
-    const demoUser = {
-      id: 1,
-      username: 'TestUser',
-      email: 'test@example.com',
-      avatar: null,
-      created_at: new Date().toISOString()
-    };
-    
-    const demoToken = 'demo-token-' + Date.now();
-    
-    if (onLogin) {
-      onLogin(demoToken, demoUser);
-    }
+  const getRandomColor = () => {
+    const colors = ['#1db954', '#ff6b6b', '#6c5ce7', '#fdcb6e', '#4ecdc4', '#45b7d1', '#a29bfe', '#fd79a8'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const formatTime = (seconds) => {
+    if (!seconds) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
-    <div className="auth-screen">
-      <div className="auth-container">
-        <div className="auth-header">
-          <h1>Harmony</h1>
-          <p>Ваша музыкальная вселенная</p>
+    <div className="screen">
+      <div className="screen-header">
+        <div className="welcome-section">
+          <h1>Привет{user?.username ? `, ${user.username}` : ''}!</h1>
+          <p>Погрузись в мир музыки, который создан именно для тебя</p>
         </div>
 
-        <div className="auth-form-container">
-          <div className="auth-tabs">
-            <button
-              className={`auth-tab ${isLogin ? 'active' : ''}`}
-              onClick={() => setIsLogin(true)}
-              disabled={isLoading}
-            >
-              Вход
-            </button>
-            <button
-              className={`auth-tab ${!isLogin ? 'active' : ''}`}
-              onClick={() => setIsLogin(false)}
-              disabled={isLoading}
-            >
-              Регистрация
-            </button>
+        <div className="quick-stats">
+          <div className="quick-stat">
+            <span className="stat-icon">▶</span>
+            <div>
+              <span className="stat-value">{playerState.currentTrack ? playerState.currentTrack.title : '—'}</span>
+              <span className="stat-label">
+                {playerState.currentTrack ? `Исполняет ${playerState.currentTrack.artist}` : 'Выберите трек для прослушивания'}
+              </span>
+            </div>
+          </div>
+          <div className="quick-stat">
+            <span className="stat-icon">⏱️</span>
+            <div>
+              <span className="stat-value">{formatTime(playerState.duration)}</span>
+              <span className="stat-label">Длительность</span>
+            </div>
+          </div>
+          <div className="quick-stat">
+            <span className="stat-icon">🎵</span>
+            <div>
+              <span className="stat-value">{audioPlayer.playlist.length}</span>
+              <span className="stat-label">Треков в библиотеке</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard">
+        {/* Последние треки */}
+        <div className="recent-section">
+          <div className="section-header">
+            <h2>Недавно прослушанные</h2>
+            {recentTracks.length > 0 && (
+              <button className="see-all-btn" onClick={() => alert('Полный список треков доступен в разделе "Музыка"')}>
+                Смотреть все → 
+              </button>
+            )}
           </div>
 
-          {error && (
-            <div className="error-message">
-              ⚠️ {error}
+          {recentTracks.length > 0 ? (
+            <div className="recent-tracks">
+              {recentTracks.map(track => (
+                <div key={track.id} className="track-card" onClick={() => handlePlayTrack(track)}>
+                  <div className="track-cover" style={{ background: track.color }}>
+                    {playerState.currentTrack?.id === track.id && playerState.isPlaying ? '🎵' : '♪'}
+                  </div>
+                  <div className="track-info">
+                    <h4>{track.title}</h4>
+                    <p>{track.artist} • {track.album}</p>
+                    {track.duration > 0 && <span className="track-duration">{formatTime(track.duration)}</span>}
+                  </div>
+                  <button
+                    className={`play-btn ${playerState.currentTrack?.id === track.id ? 'playing' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (playerState.currentTrack?.id === track.id && playerState.isPlaying) audioPlayer.pause();
+                      else handlePlayTrack(track);
+                    }}
+                  >
+                    {playerState.currentTrack?.id === track.id && playerState.isPlaying ? '⏸️' : '▶'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <div className="empty-icon">🎵</div>
+              <h3>Треков пока нет</h3>
+              <p>Начните воспроизведение или загрузите любимые композиции</p>
             </div>
           )}
-
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username">Имя пользователя</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                placeholder="Введите имя пользователя"
-                required
-                disabled={isLoading}
-              />
-            </div>
-
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Введите email"
-                  required={!isLogin}
-                  disabled={isLoading}
-                />
-              </div>
-            )}
-
-            <div className="form-group">
-              <label htmlFor="password">Пароль</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Введите пароль"
-                required
-                minLength="6"
-                disabled={isLoading}
-              />
-            </div>
-
-            {isLogin && (
-              <div className="form-options">
-                <label className="checkbox-label">
-                  <input type="checkbox" disabled={isLoading} />
-                  <span>Запомнить меня</span>
-                </label>
-                <button 
-                  type="button" 
-                  className="forgot-link"
-                  onClick={() => alert('Функция восстановления пароля временно недоступна')}
-                >
-                  Забыли пароль?
-                </button>
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              className="auth-submit-btn"
-              disabled={isLoading}
-            >
-              {isLoading ? '⏳ Обработка...' : (isLogin ? 'Войти' : 'Зарегистрироваться')}
-            </button>
-
-            <div className="demo-login">
-              <p>Или попробуйте демо-версию:</p>
-              <button 
-                type="button" 
-                className="demo-btn"
-                onClick={handleDemoLogin}
-                disabled={isLoading}
-              >
-                🚀 Демо вход
-              </button>
-            </div>
-
-            <p className="auth-footer">
-              {isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}{' '}
-              <button
-                type="button"
-                className="switch-mode"
-                onClick={() => setIsLogin(!isLogin)}
-                disabled={isLoading}
-              >
-                {isLogin ? 'Зарегистрироваться' : 'Войти'}
-              </button>
-            </p>
-          </form>
         </div>
 
-        <div className="auth-footer-info">
-          <p>© 2024 Harmony. Все права защищены.</p>
-          <p>Версия 1.0.0</p>
+        {/* Плейлисты */}
+        <div className="top-section">
+          <div className="section-header">
+            <h2>Мои плейлисты</h2>
+            <button className="see-all-btn" onClick={() => alert('Управление плейлистами доступно в разделе "Музыка"')}>
+              Смотреть все →
+            </button>
+          </div>
+          <div className="playlists-grid">
+            {topPlaylists.map(playlist => (
+              <div key={playlist.id} className="playlist-card">
+                <div className="playlist-color" style={{ background: playlist.color }}></div>
+                <div className="playlist-info">
+                  <h3>{playlist.name}</h3>
+                  <p>{playlist.count > 0 ? `${playlist.count} ${playlist.count === 1 ? 'трек' : 'треков'}` : 'Плейлист пуст'}</p>
+                </div>
+                <button className="play-btn" onClick={() => alert(`Воспроизведение плейлиста "${playlist.name}"`)}>
+                  ▶
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Рекомендации */}
+        <div className="recommendations">
+          <h2>Рекомендуем для тебя</h2>
+          <div className="recommendation-cards">
+            <div className="recommendation-card">
+              <div className="rec-cover" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}><span>🎧</span></div>
+              <h4>Свежие хиты недели</h4>
+              <p>Следите за новыми хитами и открытиями</p>
+            </div>
+            <div className="recommendation-card">
+              <div className="rec-cover" style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)' }}><span>🎶</span></div>
+              <h4>Подборка на ваш вкус</h4>
+              <p>Музыка, которая тебе понравится</p>
+            </div>
+            <div className="recommendation-card">
+              <div className="rec-cover" style={{ background: 'linear-gradient(135deg, #4facfe, #00f2fe)' }}><span>🔥</span></div>
+              <h4>Горячие треки</h4>
+              <p>Что слушают все прямо сейчас</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Статистика */}
+        <div className="trending-section">
+          <h2>Ваша статистика</h2>
+          <div className="trending-grid">
+            <div className="trending-card">
+              <div className="trending-badge">🔥</div>
+              <div className="trending-info">
+                <h3>Топ-жанр</h3>
+                <p>Определено по вашим последним прослушиваниям</p>
+              </div>
+              <div className="trending-stats">
+                <span className="trending-count">Поп</span>
+                <span className="trending-label">жанр</span>
+              </div>
+            </div>
+            <div className="trending-card">
+              <div className="trending-badge">🚀</div>
+              <div className="trending-info">
+                <h3>Музыкальная активность</h3>
+                <p>За последнюю неделю</p>
+              </div>
+              <div className="trending-stats">
+                <span className="trending-count">12ч</span>
+                <span className="trending-label">времени</span>
+              </div>
+            </div>
+            <div className="trending-card">
+              <div className="trending-badge">🎯</div>
+              <div className="trending-info">
+                <h3>Ваш фаворит</h3>
+                <p>Самый прослушиваемый артист</p>
+              </div>
+              <div className="trending-stats">
+                <span className="trending-count">The Weeknd</span>
+                <span className="trending-label">артист</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Быстрые действия */}
+        <div className="quick-actions">
+          <h2>Быстрые действия</h2>
+          <div className="actions-grid">
+            <label className="action-button">
+              <input type="file" accept="audio/*" onChange={handleMusicUpload} style={{ display: 'none' }} />
+              <span className="action-icon">➕</span>
+              <span className="action-text">Загрузить трек</span>
+            </label>
+            <button className="action-button" onClick={handleCreatePlaylist}>
+              <span className="action-icon">📁</span>
+              <span className="action-text">Новый плейлист</span>
+            </button>
+            <button className="action-button" onClick={() => window.location.href = '/search'}>
+              <span className="action-icon">🔍</span>
+              <span className="action-text">Поиск треков</span>
+            </button>
+            <button className="action-button" onClick={() => alert('Радиостанции скоро будут доступны')}>
+              <span className="action-icon">🎧</span>
+              <span className="action-text">Слушать радио</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

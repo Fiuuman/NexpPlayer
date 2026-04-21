@@ -1,12 +1,12 @@
 import './MenuBar.css';
 
-const MenuBar = ({ 
-  activeScreen, 
-  setActiveScreen, 
-  isExpanded, 
-  setIsExpanded, 
+const MenuBar = ({
+  activeScreen,
+  setActiveScreen,
+  isExpanded,
+  setIsExpanded,
   playlistCount,
-  user 
+  user
 }) => {
   const menuItems = [
     { id: 'home', icon: '🏠', label: 'Home' },
@@ -29,22 +29,29 @@ const MenuBar = ({
     { number: 245, label: 'Hours' },
   ];
 
+  const username = user?.username || 'Guest';
+  const email = user?.email || 'guest@nexp.local';
+  const avatarLetter = username?.[0]?.toUpperCase() || 'G';
+
   const handleMenuItemClick = (id) => {
     setActiveScreen(id);
-    if (window.innerWidth < 768) setIsExpanded(false);
+    if (window.innerWidth < 768) {
+      setIsExpanded(false);
+    }
   };
 
   return (
-    <div className={`menu-bar ${isExpanded ? 'expanded' : 'collapsed'}`}>
-      {/* Header */}
+    <aside className={`menu-bar ${isExpanded ? 'expanded' : 'collapsed'}`}>
       <div className="menu-header">
-        <button 
+        <button
           className="toggle-btn"
           onClick={() => setIsExpanded(!isExpanded)}
-          title={isExpanded ? 'Collapse menu' : 'Expand menu'}
+          title={isExpanded ? 'Свернуть меню' : 'Развернуть меню'}
+          aria-label={isExpanded ? 'Свернуть меню' : 'Развернуть меню'}
         >
           {isExpanded ? '◀' : '▶'}
         </button>
+
         {isExpanded && (
           <div className="app-brand">
             <div className="logo">🎵</div>
@@ -53,37 +60,36 @@ const MenuBar = ({
         )}
       </div>
 
-      {/* User info */}
       <div className="user-section">
         <div className="user-avatar-container">
           {user?.avatar ? (
-            <img 
-              src={user.avatar} 
-              alt={user.username} 
+            <img
+              src={user.avatar}
+              alt={username}
               className="user-avatar"
               onClick={() => handleMenuItemClick('profile')}
             />
           ) : (
-            <div 
+            <div
               className="avatar-placeholder"
               onClick={() => handleMenuItemClick('profile')}
             >
-              {user?.username?.[0]?.toUpperCase() || '👤'}
+              {avatarLetter}
             </div>
           )}
         </div>
-        {isExpanded && user && (
+
+        {isExpanded && (
           <div className="user-info">
-            <div className="username">{user.username || 'Guest'}</div>
-            <div className="user-email">{user.email || ''}</div>
+            <div className="username">{username}</div>
+            <div className="user-email">{email}</div>
             <div className="user-premium-badge">Premium</div>
           </div>
         )}
       </div>
 
-      {/* Main menu */}
       <nav className="menu-items">
-        {menuItems.map(item => (
+        {menuItems.map((item) => (
           <button
             key={item.id}
             className={`menu-item ${activeScreen === item.id ? 'active' : ''}`}
@@ -91,7 +97,9 @@ const MenuBar = ({
             title={item.label}
           >
             <span className="menu-icon">{item.icon}</span>
+
             {isExpanded && <span className="menu-label">{item.label}</span>}
+
             {item.id === 'music' && playlistCount > 0 && (
               <span className="playlist-badge">{playlistCount}</span>
             )}
@@ -99,12 +107,12 @@ const MenuBar = ({
         ))}
       </nav>
 
-      {/* Playlists */}
       {isExpanded && (
         <div className="playlist-section">
           <div className="section-header">
-            <span className="section-title">PLAYLISTS</span>
+            <span className="section-title">Playlists</span>
           </div>
+
           <div className="playlist-items">
             {playlistItems.map((pl, idx) => (
               <button key={idx} className="playlist-item">
@@ -117,12 +125,12 @@ const MenuBar = ({
         </div>
       )}
 
-      {/* Stats */}
       {isExpanded && (
         <div className="stats-section">
           <div className="section-header">
-            <span className="section-title">PLAYER STATS</span>
+            <span className="section-title">Player Stats</span>
           </div>
+
           <div className="stats-grid">
             {statsItems.map((stat, idx) => (
               <div key={idx} className="stat-item">
@@ -134,7 +142,6 @@ const MenuBar = ({
         </div>
       )}
 
-      {/* Footer */}
       {isExpanded && (
         <div className="menu-footer">
           <div className="premium-info">
@@ -144,13 +151,17 @@ const MenuBar = ({
               <div className="premium-expiry">Active until 26.01.2027</div>
             </div>
           </div>
-          <button className="logout-btn" onClick={() => setActiveScreen('profile')}>
+
+          <button
+            className="logout-btn"
+            onClick={() => setActiveScreen('profile')}
+          >
             <span className="logout-icon">🚪</span>
             <span className="logout-text">Logout</span>
           </button>
         </div>
       )}
-    </div>
+    </aside>
   );
 };
 

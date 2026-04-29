@@ -7,8 +7,8 @@
 
 ## 🔗 Репозиторий
 
-👉 **GitHub:** https://github.com/Fiuuman/NexpPlayer
-
+👉 **GitHub(Desktop):** https://github.com/Fiuuman/NexpPlayer
+👉 **GitHub(Mobile):** https://github.com/botix12/NextPlayer-mobile
 ---
 
 ## ✨ Возможности

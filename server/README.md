@@ -1,10 +1,9 @@
 # Music Server API v2.0
 
-## Запуск
+## Запуск Docker
 
 ```bash
-npm install
-npm run dev
+dcker compose up --build
 ```
 
 ## API Endpoints

@@ -75,12 +75,12 @@
 git clone https://github.com/Fiuuman/NexpPlayer.git
 cd NexpPlayer
 
-# Frontend
-cd frontend
-npm install
-npm run dev
-
 # Backend (в отдельном терминале)
-cd ../backend
+cd NexpPlayer/server
 npm install
-npm run dev
+docker compose up --build
+
+# Frontend
+cd NexpPlayer
+npm run tauri dev
+```

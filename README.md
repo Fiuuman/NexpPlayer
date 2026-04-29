@@ -65,7 +65,7 @@
 ### Требования
 - **Node.js** 20.x или выше
 - **Rust** (для сборки Tauri)
-- **PostgreSQL** 15+
+- **SQLite** 15+
 - **FFmpeg** в PATH
 
 ### Установка

@@ -8,6 +8,6 @@ RUN npm install --omit=dev
 COPY . .
 RUN mkdir -p /app/data/uploads/avatars /app/data/uploads/music
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["node", "server.js"]
